@@ -3,6 +3,7 @@ package interviewbit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class DynamicProgramming {
@@ -252,11 +253,117 @@ public class DynamicProgramming {
         }
         return Math.max(dp[0][0],dp[0][1]);
     }
+	
+	// editing strings
+		public int minDistance(String A, String B) {
+			int m = A.length() + 1;
+			int n = B.length() + 1;
+			int[][] db = new int[m][n];
+			for (int i = 0; i < m; i++) {
+				db[i][0] = i;
+			}
+			for (int j = 0; j < n; j++) {
+				db[0][j] = j;
+			}
+			for (int i = 1; i < m; i++) {
+				for (int j = 1; j < n; j++) {
+					if (A.charAt(i - 1) == B.charAt(j - 1)) {
+						db[i][j] = db[i - 1][j - 1];
+					} else {
+						db[i][j] = Math.min(Math.min(db[i - 1][j] + 1, db[i][j - 1] + 1), db[i - 1][j - 1] + 1);
+					}
+				}
+			}
+			return db[m - 1][n - 1];
+		}
+
+		int memo[][];
+		public int minDistance_2(String a, String b) {
+			memo = new int[a.length()][b.length()];
+			for (int[] row : memo)
+				java.util.Arrays.fill(row, -1);
+			return editDist(a, b, 0, 0);
+		}
+		public int editDist(String a, String b, int i, int j) {
+			if (i == a.length() && j == b.length())
+				return 0;
+			if (i == a.length())
+				return b.length() - j;
+			if (j == b.length())
+				return a.length() - i;
+			if (memo[i][j] != -1)
+				return memo[i][j];
+			int res = Integer.MAX_VALUE;
+			if (a.charAt(i) == b.charAt(j))
+				res = editDist(a, b, i + 1, j + 1);
+			res = Math.min(res, 1 + editDist(a, b, i + 1, j + 1));
+			res = Math.min(res, 1 + editDist(a, b, i + 1, j));
+			res = Math.min(res, 1 + editDist(a, b, i, j + 1));
+			return memo[i][j] = res;
+		}
+//		ArrayList<String> wordBreakres = new ArrayList<String>();
+//		HashSet<String> words = new HashSet<String>();
+//		public ArrayList<String> wordBreak(String A, ArrayList<String> B) {
+//			for(int i=0;i<B.size();i++) {
+//				words.add(B.get(i));
+//			}
+//			processWordBreak(new StringBuffer(),0,1,A);
+//			return wordBreakres;
+//	    }
+//		
+//		public void processWordBreak(StringBuffer a,int st,int ed,String p) {
+//			if(st==p.length()) {
+//				wordBreakres.add(a.toString());
+//				return;
+//			}
+//			for(int i=ed;i<=p.length();i++) {
+//				String s = p.substring(st, i);
+//				if(words.contains(s)) {
+//					StringBuffer b = new StringBuffer(a);
+//					if(b.length()>0) {
+//						b.append(" "+s);
+//					}else {
+//						b.append(s);
+//					}					
+//					processWordBreak(b,i,i+1, p);
+//				}
+//			}
+//			return;
+//		}
+		HashSet<String> words = new HashSet<String>();
+		public int wordBreak(String A, ArrayList<String> B) {
+			 boolean[] dp = new boolean[A.length()];
+			for(int i=0;i<B.size();i++) {
+				words.add(B.get(i));
+			}
+			return processWordBreak(0,A,dp)?1:0;
+	    }
+		
+		public boolean processWordBreak(int st,String p,boolean[] dp) {
+			if(st==p.length()) {
+				return true;
+			}
+			if(dp[st]) return dp[st];
+			boolean res=false;
+			for(int i=st+1;i<=p.length();i++) {
+				String s = p.substring(st, i);
+				if(words.contains(s) && processWordBreak(i, p,dp)) {
+					res = true;
+					break;
+				}
+			}
+			dp[st]=res;
+			return res;
+		}
 
 	public static void main(String args[]) {
 		List<Integer> A = new ArrayList<Integer>(java.util.Arrays.asList(100, 10, 8, 300, 6, 1, 4, 2));
 		DynamicProgramming dp = new DynamicProgramming();
-		System.out.println(dp.solve_LAP(A));
+//		catsanddog
+//		5 cat cats and sand dog
+		String a ="myinterviewtrainer";
+		ArrayList<String> s = new ArrayList<String>(java.util.Arrays.asList(new String[] {"trainer","my","interview"})) ;
+		System.out.println(dp.wordBreak(a, s));
 
 	}
 

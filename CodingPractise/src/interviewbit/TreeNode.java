@@ -20,6 +20,30 @@ public class TreeNode {
 		left = null;
 		right = null;
 	}
+	
+	long max =Integer.MIN_VALUE;
+	public int maxPathSum(TreeNode A) {
+		maxSum(A);
+		return (int) max;
+    }
+	
+	long maxSum(TreeNode A) {
+		if(A==null) {
+			return Integer.MIN_VALUE;
+		}
+		
+		if(A.right==null && A.left==null) {
+			max =Math.max(max, A.val);
+			return A.val;
+		}
+		
+		long a = A.val;
+		long al = maxSum(A.left);
+		long ar = maxSum(A.right);
+		long m = Math.max(Math.max(a+al+ar, a+al), Math.max(a+ar, a));
+		max=Math.max(max, m);
+		return a+al>a+ar?a+al:a+ar;
+	}
 
 	public class TreeNode_s {
 		String val;
@@ -387,7 +411,11 @@ public class TreeNode {
 		ArrayList<String> B = new ArrayList<String>();
 		B.add("bearcat");
 		B.add("bert");
-
-		System.out.println(new TreeNode(1).prefix_1(B));
+		TreeNode A = new TreeNode(1);
+		A.left =new TreeNode(2);
+		A.right =new TreeNode(3);
+		A.right.left =new TreeNode(4);
+		A.right.left.right =new TreeNode(5);
+		System.out.println(A.maxPathSum(A));
 	}
 }

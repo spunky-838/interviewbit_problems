@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Arrays {
+public class Arrays_ {
 	// A[i] = j is changed to A[j] = i [2, 1, 3, 4, 0] [4, 1, 0, 2, 3]
 	public static ArrayList<Integer> solve(ArrayList<Integer> A) {
 		int ind = A.get(0);
@@ -228,5 +228,27 @@ public class Arrays {
 
 	public static void main(String[] args) {
 		System.out.println(-22%22);
+	}
+	
+	public int solve(ArrayList<Integer> A,int B) {
+		if(A.size()==0||B==0) {
+			return 0;
+		}
+		long mod = 1000000007;
+		long [] c = new long[B];
+		for(int i=0;i<A.size();i++) {
+			int d = A.get(i)%B;
+			c[d]++;
+		}
+		long res=((c[0]*(c[0]-1))/2)%mod;
+		
+		for(int i=1;i<B;i++) {
+			if(i==B-i) {
+				res=(res+(c[i]*(c[i]-1)/2))%mod;
+			}
+			res=(res+(c[i]*c[B-i]))%mod;
+		}
+		return (int) (res%mod);
+		
 	}
 }

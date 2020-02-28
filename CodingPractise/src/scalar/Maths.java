@@ -319,7 +319,7 @@ public class Maths {
 					}
 				}
 			}
-       }
+		}
 		return res;
 	}
 
@@ -354,8 +354,177 @@ public class Maths {
 		return res;
 	}
 
-	public static void main(String[] args) {
+//	public int res = 0;
+//	public int solve(ArrayList<Integer> A, int B) {
+//		Collections.sort(A);
+//		solve(A, B, 0, 3);
+//		return  res;
+//	}
+//	public void solve(ArrayList<Integer> A, int B, int ind, int places) {
+//		if (places == 1) {
+//			res += A.get(ind + B - 1);
+//			return;
+//		}
+//		int len = A.size() - ind;
+//		int d = getNCR(len - 1, places - 1);
+//		if (B > d) {
+//			solve(A, B - d, ++ind, places);
+//			
+//		} else if (d == B) {
+//			int k = A.size()-1;
+//			res += A.get(ind);
+//			places--;
+//			while (places > 0) {
+//				res += A.get(k);
+//				places--;
+//				k--;
+//			}
+//		} else {
+//			res += A.get(ind);
+//			solve(A, B, ++ind, places-1);
+//		}
+//		return;
+//	}
+//	public int getNCR(int n, int r) {
+//		int res = 1;
+//		if (r > n - r) {
+//			r = n - r;
+//		}
+//		for (int i = 0; i < r; i++) {
+//			res *= (n - i);
+//			res /= (i + 1);
+//		}
+//		return res;
+//	}
 
-		System.out.println(reverse(-123));
+	public int solve_sumPairs(ArrayList<Integer> A, int B) {
+		long res=0;
+		long mod=1000000007;
+		long b[] = new long[B];
+		for(int i=0;i<A.size();i++) {
+			b[A.get(i)%B]++;
+		}
+		for(int i=0;i<=B/2;i++) {
+			if(i==0||i==B-i) {
+				res+=(b[i]*(b[i]-1))/2;
+			}else {
+				res+=(b[i]*b[B-i]);
+			}	
+		}
+		return (int) (res%mod);
+    }
+	
+	public ArrayList<Integer> solve_sumPowers3(int A) {
+		ArrayList<Integer> res = new ArrayList<Integer>();
+		int p=1;
+		while(A>0) {
+			int d = A%3;
+			while(d>0) {
+				res.add(p);
+				d--;
+			}
+			A=A/3;
+			p*=3;
+		}
+		return res;
+    }
+	
+	public int solve_xorprime(ArrayList<Integer> A) {
+		long mod=1000000007;
+		long res=0;
+		for(int i=0;i<A.size();i++) {
+			int num = A.get(i);
+			ArrayList<Integer> pf = new ArrayList<Integer>();
+			if(num%2==0) {
+				pf.add(2);
+				while (num % 2 == 0) { 
+	                num /= 2; 
+	            } 
+			}
+			for (int j = 3; j <= Math.sqrt(num); j += 2) { 
+				if(num%j==0) {
+					pf.add(j);
+					while (num % j == 0) { 
+		                num /= j; 
+		            } 
+				}
+	        }
+			if (num > 2) {
+				pf.add(num);
+			}
+			long gv=0;
+			int nof=pf.size();
+			for(int k=0;k<(1<<nof);++k) {
+				int temp =0;
+				for(int j=0;j<nof;j++) {
+					if((k & (1<<j))>0) {
+						temp=temp^pf.get(j);
+					}
+				}
+				gv=(gv+temp)%mod;
+			}
+			res=(res+gv)%mod;
+		}
+		return (int) res;
+    }
+	public boolean check(ArrayList<Integer> A,int mid,int B) {
+		int n=A.size();
+		int cnt=0;
+		for(int i=0;i<n;i++) {
+			for(int j=i+1;j<n;j++) {
+				int val=mid-(A.get(i)+A.get(j));
+				if(val<=0) {
+					break;
+				}
+				 int b=getLowerbound(A, val);
+				 if(b>j) {
+					cnt+=b-j; 
+				 }
+			}
+		}
+		if(cnt<B) {
+			return true; 
+		}
+		return false;
 	}
+	public int getLowerbound(ArrayList<Integer> A,int B) {
+		int low=0;
+		int high =A.size()-1;
+		while(low<high) {
+			int mid=(low+high)/2;
+			if(A.get(mid)<=B) {
+				low=mid+1;
+			}
+			else {
+				high=mid-1;
+			}
+		}
+		return A.get(low)>B?low-1:low;
+	}
+	public int solve_smallestAgain	(ArrayList<Integer> A, int B) {
+		if(A.size()<3) {return -1;}
+		Collections.sort(A);
+		int l=A.size();
+		int low=A.get(0)+A.get(1)+A.get(2);
+		int high=A.get(l-1)+A.get(l-2)+A.get(l-3);
+		while(low<high) {
+			int mid =(low+high)/2;
+			if(check(A, mid, B)) {
+				low=mid+1;
+			}else {
+				high=mid-1;
+			}
+		}
+		return check(A, high, B)?high:high-1;
+    }
+	
+
+	public static void main(String[] args) {
+		Maths a = new Maths();
+		ArrayList<Integer> A = new ArrayList<Integer>();
+		A.add(10);
+		A.add(45);
+		System.out.println(a.solve_xorprime(A));
+	}
+
 }
