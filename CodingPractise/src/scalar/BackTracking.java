@@ -362,7 +362,93 @@ public class BackTracking {
 		B %= fact_n;
 		return num + getPermutation(A, B);
 	}
-
+	public int res_sizlets=0;
+	public int solve_sixlets(ArrayList<Integer> A, int B) {
+		Collections.sort(A);
+		if(A.size()<B) {
+			return res_sizlets;
+		}
+		sixlets_backtrack(A, B, 0,0);
+		return res_sizlets;
+    }
+	public void sixlets_backtrack(ArrayList<Integer> A,int size,int s,int ind) {
+		if(size==0) {
+			if(s<=1000) {
+				++res_sizlets;
+				return;
+			}else {
+				return;
+			}
+		}
+		for(int i=ind;i<A.size();i++){
+			if(s+A.get(i)<=1000) {
+				s+=A.get(i);
+				--size;
+				sixlets_backtrack(A, size, s, i+1);
+				++size;
+				s-=A.get(i);
+			}else {
+				return;
+			}
+		}
+	}
+	
+	public HashSet<String> res_invalidParanthesis= new HashSet<String>();
+	public ArrayList<String> solve_invalidParanthesis(String A) {
+		int min =findMin(A);
+		invalidParanthesis_backtrack(A, min, 0);
+	
+		return new ArrayList<String>(res_invalidParanthesis);
+    }
+	
+	public void invalidParanthesis_backtrack(String A,int ops,int ind) {
+		if(ops==0) {
+			if(isValid(A)) {
+				res_invalidParanthesis.add(A);
+				return;
+			}else {
+				return;
+			}
+		}
+		for(int i=ind;i<A.length();i++){
+			String c=A.substring(0,i)+A.substring(i+1);
+			ops--;
+			invalidParanthesis_backtrack(c, ops, i);
+			ops++;
+		}
+	}
+	public boolean isValid(String a) {
+		int buf=0;
+		for(int i=0;i<a.length();i++) {
+			if(a.charAt(i)=='(') {
+				buf++;
+			}else if(a.charAt(i)==')'){
+				buf--;
+			}
+			if(buf<0) {return false;}
+		}
+		return buf==0?true:false;
+	}
+	public int findMin(String a) {
+		int min=0;
+		int buf=0;
+		for(int i=0;i<a.length();i++) {
+			if(a.charAt(i)=='(') {
+				buf++;
+			}else if(a.charAt(i)==')'){
+				if(buf==0) {
+					min++;
+				}else {
+					buf--;
+				}
+			}
+		}
+		min+=buf;
+		return min;
+	}
+	
+	
+	
 	public static void main(String args[]) {
 		HashMap<Integer, HashSet<Integer>> rows = new HashMap<Integer, HashSet<Integer>>();
 		rows.getOrDefault(1, new HashSet<Integer>()).add(1);
@@ -374,7 +460,8 @@ public class BackTracking {
 		A.add(r1);
 		A.add(r2);
 		A.add(r3);
-		System.out.println(rows);
+		ArrayList<Integer> a=new ArrayList<Integer>(Arrays.asList(new Integer[] {508, 503, 412, 895, 256, 89, 245, 567, 9, 123}));
+		System.out.println(b.solve_invalidParanthesis(")((p"));
 	}
 
 }
