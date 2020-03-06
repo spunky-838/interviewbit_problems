@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class Sorting {
 	public class Interval {
@@ -45,21 +44,6 @@ public class Sorting {
 			}
 		}
 		return res;
-
-	}
-
-	public int countInversions(ArrayList<Integer> A) {
-		ArrayList<Integer> B = new ArrayList<Integer>(A);
-		Collections.sort(B);
-		HashMap<Integer, Integer> m = new HashMap<Integer, Integer>();
-		for (int i = 0; i < B.size(); i++) {
-			m.put(B.get(i), i);
-		}
-		int inversions = 0;
-		for (int i = 0; i < A.size(); i++) {
-			inversions += m.get(A.get(i)) < i ? i - m.get(A.get(i)) : 0;
-		}
-		return inversions;
 
 	}
 
@@ -112,7 +96,7 @@ public class Sorting {
 		double b = Double.parseDouble(A.get(1));
 		double c = Double.parseDouble(A.get(2));
 		for (int i = 3; i < A.size(); i++) {
-			if((a + b + c) > 1 && (a + b + c) < 2){
+			if ((a + b + c) > 1 && (a + b + c) < 2) {
 				return 1;
 			} else if ((a + b + c) >= 2) {
 				if (a > b && a > c) {
@@ -134,43 +118,203 @@ public class Sorting {
 		}
 		return (a + b + c) > 1.0 && (a + b + c) < 2.0 ? 1 : 0;
 	}
-	
+
 	public ArrayList<Integer> solve_flightRangeBookings(int A, ArrayList<ArrayList<Integer>> B) {
 		Integer[] a = new Integer[A];
-		for(int i=0;i<B.size();i++) {
-			if(!B.get(i).isEmpty()) {
-				int st=B.get(i).get(0)-1;
-				int ed=B.get(i).get(1)-1;
-				int k=B.get(i).get(2);
-				a[st]+=k;
-				if(ed+1<A) {
-					a[ed+1]-=k;
+		for (int i = 0; i < B.size(); i++) {
+			if (!B.get(i).isEmpty()) {
+				int st = B.get(i).get(0) - 1;
+				int ed = B.get(i).get(1) - 1;
+				int k = B.get(i).get(2);
+				a[st] += k;
+				if (ed + 1 < A) {
+					a[ed + 1] -= k;
 				}
 			}
 		}
-		int sum=a[0];
-		for(int i=1;i<a.length;i++) {
-			a[i]+=sum;
-			sum=a[i];
+		int sum = a[0];
+		for (int i = 1; i < a.length; i++) {
+			a[i] += sum;
+			sum = a[i];
 		}
 		return new ArrayList<Integer>(java.util.Arrays.asList(a));
-    }
-	
+	}
+
 	public int solve_sumofdiff(ArrayList<Integer> A) {
-        Collections.sort(A);
-        long mod=1000000007;
-		long diff=0;
-		for(int i=0;i<A.size();i++) {
-			for(int j=i+1;j<A.size();j++) {
-				diff+=((Math.pow(2, j-i)%mod)*(A.get(j)-A.get(i)))%mod;
+		Collections.sort(A);
+		long mod = 1000000007;
+		long diff = 0;
+		for (int i = 0; i < A.size(); i++) {
+			for (int j = i + 1; j < A.size(); j++) {
+				diff += ((Math.pow(2, j - i) % mod) * (A.get(j) - A.get(i))) % mod;
 			}
 		}
-		return (int) (diff%mod);
+		return (int) (diff % mod);
+	}
+	
+	public static int res_countInversions = 0;
+	public int countInversions(ArrayList<Integer> A) {
+		if(A.size()<2) {return 0;}
+		mergesort(A, 0, A.size()-1);
+		return res_countInversions;
+	}
+	
+	public ArrayList<Integer> mergesort(ArrayList<Integer> A,int start,int end) {
+		ArrayList<Integer> res = new ArrayList<Integer>();
+		if(start==end) {
+			res.add(A.get(start));
+		}
+		else if(start<end) {
+			int mid=(start+end)/2;
+			res =merge(mergesort(A, start, mid),mergesort(A, mid+1, end) );
+		}
+		return res;
+	}
+	
+	public ArrayList<Integer> merge(ArrayList<Integer> A,ArrayList<Integer> B) {
+		ArrayList<Integer> res = new ArrayList<Integer>();
+		int i=0;
+		int j=0;
+		while(i<A.size()&&j<B.size()) {
+			if(A.get(i)>B.get(j)) {
+				res_countInversions+=B.size()-j;
+				res.add(A.get(i));
+				i++;
+			}else{
+				res.add(B.get(j));
+				j++;
+			}
+		}
+		while(i<A.size()) {
+			res.add(A.get(i));
+			i++;
+		}
+		while(j<B.size()) {
+			res.add(B.get(j));
+			j++;
+		}
+		return res;
+	}
+	public int solve_bottles(ArrayList<Integer> A) {
+        Collections.sort(A);
+        int max=1;int cnt=1;
+        for(int i=1;i<A.size();i++){
+            if(A.get(i)==A.get(i-1)){
+                cnt++;
+            }else{
+                max=Math.max(max,cnt);
+                cnt=1;
+            }
+        }
+        max=Math.max(max,cnt);
+        return max;
     }
 	
+	public ArrayList<Integer> solve_minmax(ArrayList<Integer> A) {
+		ArrayList<Integer> res = new ArrayList<Integer>();
+		 Collections.sort(A);
+		 long mod=1000000007;
+		 long max=0;
+		 for(int i=0;i<A.size()/2;i++) {
+			 max=((max%mod)+((A.get(A.size()-i-1)-A.get(i))%mod))%mod;
+		 }
+		 long min=0;
+		 for(int i=1;i<A.size();i=i+2) {
+			 min=((min%mod)+((A.get(i)-A.get(i-1))%mod))%mod;
+		 }
+		 res.add((int) max);
+		 res.add((int) min);
+		 return res;
+    }
 	
-	public static void main(String args[]) {
+	public ArrayList<ArrayList<Integer>> solve_closeToOrigin(ArrayList<ArrayList<Integer>> A, int B) {
+		Collections.sort(A,new Comparator<ArrayList<Integer>>() {
+			@Override
+			public int compare(ArrayList<Integer> o1, ArrayList<Integer> o2) {
+				double a=Math.sqrt((long)o1.get(0)*(long)o1.get(0)+(long)o1.get(1)*(long)o1.get(1));
+				double b=Math.sqrt((long)o2.get(0)*(long)o2.get(0)+(long)o2.get(1)*(long)o2.get(1));
+				return a>=b?1:-1;
+			}
+		});
+		ArrayList<ArrayList<Integer>> res= new ArrayList<ArrayList<Integer>>( A.subList(0, B));
+		Collections.sort(res, new Comparator<ArrayList<Integer>>() {
+			@Override
+			public int compare(ArrayList<Integer> o1, ArrayList<Integer> o2) {
+				return o1.get(0)!=o2.get(0)?o1.get(0)-o2.get(0):o1.get(1)-o2.get(1);
+			}
+		});
+		return res;
+    }
+	
+	public ArrayList<Integer> solve_alternatePosAndNeg(ArrayList<Integer> A) {
+        int pind=-1;
+        for(int i=0;i<A.size();i++){
+            if(A.get(i)>-1 && pind==-1){
+                pind=i;
+            }
+            if(A.get(i)<0 && pind!=-1){
+                int a = A.remove(i);
+                A.add(pind,a);
+                pind++;
+            }
+        }
+        int i=1,j=pind;
+        while(i<j && j<A.size()){
+            int a = A.remove(j);
+            A.add(i,a);
+            i+=2;
+            j++;
+        }
+        return A;
+    }
+	
+	public int solve_maxChunks(ArrayList<Integer> A) {
+		int max=0;
+		for(int i=0;i<A.size();i++) {
+			if(A.get(i)==i) {
+				max++;
+			}
+		}
+		return max;
+    }
+	
+	public int solve_minswaps(ArrayList<Integer> A) {
+		HashMap<Integer,Integer> hm = new HashMap<Integer, Integer>();
+		int res=0;
+		for(int i=0;i<A.size();i++) {
+			hm.put(A.get(i), i);
+		}
+		for(int i=0;i<A.size();i++) {
+			if(A.get(i)!=i) {
+				int ind=hm.get(i);
+				int temp=A.get(i);
+				A.set(i, i);
+				A.set(ind, temp);
+				hm.put(i, i);
+				hm.put(temp, ind);
+				res++;
+			}
+		}
+		return res;
+    }
+	
+	public int solve_uniqueElements(ArrayList<Integer> A) {
+		Collections.sort(A);
+		int cnt=0;
+		for(int i=1;i<A.size();i++) {
+			if(A.get(i)<=A.get(i-1)) {
+				cnt+=A.get(i-1)-A.get(i)+1;
+				A.set(i, A.get(i-1)+1);
+			}
+		}
+		return cnt;
+    }
 
+	public static void main(String args[]) {
+		Sorting s = new Sorting();
+		ArrayList<Integer> A = new ArrayList<Integer>();
+		A.add(1);A.add(1);A.add(2);
+		System.out.println(s.solve_uniqueElements(A));
 	}
 
 }
