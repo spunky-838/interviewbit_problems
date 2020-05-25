@@ -22,6 +22,51 @@ public class Trees {
 		}
 	}
 
+public int kthSmallest(TreeNode root, int k) {
+	ArrayList<Integer> res = new ArrayList<Integer>();
+	Stack<TreeNode> s = new Stack<TreeNode>();
+
+	while (root != null || !s.isEmpty()) {
+		while (root != null) {
+			s.push(root);
+			root = root.left;
+		}
+		root = s.pop();
+		res.add(root.val);
+		root = root.right;
+	}
+	return res.get(k);
+    }
+
+
+public int maxSubarraySumCircular(int[] A) {
+	int l=A.length;
+    int max=Integer.MIN_VALUE;
+    int ind=-1;
+    int sum=0;
+    int i=0;
+    int size=0;
+    while(i<l && size<l+1) {
+        max=Math.max(sum, max);
+        if(sum+A[i%l]<0) {
+            sum=0;
+            ind=(i+1)%l;
+            size=0;
+        }else {
+        	if(ind==-1) {
+        		ind=0;
+        	}
+            sum+=A[i%l];
+            size++;
+            max=Math.max(sum, max);
+        }
+        i++;
+    }
+    return max;
+    
+}
+
+
 	public ArrayList<Integer> inorderTraversal(TreeNode A) {
 		ArrayList<Integer> res = new ArrayList<Integer>();
 		Stack<TreeNode> s = new Stack<TreeNode>();
@@ -544,6 +589,6 @@ public class Trees {
 		ArrayList<Integer> A = new ArrayList<Integer>(Arrays.asList(new Integer[] { 1, 2, 3 }));
 		ArrayList<Integer> B = new ArrayList<Integer>(Arrays.asList(new Integer[] { 2, 1, 3 }));
 		Trees t = new Trees();
-		System.out.println(t.LBSlength("([[]]()}[]([[]]([[]]))["));
+		System.out.println(t.maxSubarraySumCircular(new int[] { 5, -3, 5 }));
 	}
 }

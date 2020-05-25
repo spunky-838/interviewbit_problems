@@ -3,7 +3,7 @@ package scalar;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map.Entry;
+import java.util.List;
 
 public class Maths {
 	public static int gcd(int A, int B) {
@@ -520,11 +520,6 @@ public class Maths {
 	
 
 	public static void main(String[] args) {
-		Maths a = new Maths();
-		ArrayList<Integer> A = new ArrayList<Integer>();
-		A.add(10);
-		A.add(45);
-		System.out.println(a.solve_xorprime(A));
 	}
 
 }
