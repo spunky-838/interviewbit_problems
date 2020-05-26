@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
@@ -934,6 +933,85 @@ public class DP {
 		return sum - dp[A.size()][sum];
 
 	}
+	
+	public int solve_burstballons(ArrayList<Integer> A) {
+       int n=A.size();
+       A.add(0,1);
+       A.add(A.size(),1);
+       int [][]dp=new int[n+2][n+2];
+       for(int length=1;length<=n;length++){
+           for(int left=1;left<=n-length+1;left++){
+               int right=left+length-1;
+               for(int last=left;last<=right;last++){
+                   int x=dp[left][last-1]+dp[last+1][right]+A.get(left-1)*A.get(right+1)*A.get(last);
+                   dp[left][right]=Math.max(x,dp[left][right]);
+               }
+           }
+       }
+       
+       return dp[1][n];
+   }
+	
+	public int solve_arithmaticseq(ArrayList<Integer> A) {
+		
+		HashMap<Integer,HashMap<Integer,Integer>> hm= new HashMap<Integer, HashMap<Integer,Integer>>();
+		int res=0;
+		for(int i=0;i<A.size();i++) {
+			for(int j=0;j<i;j++) {
+				int dif = A.get(i)-A.get(j);
+				if(hm.containsKey(i)) {
+					hm.get(i).put(dif, hm.get(i).getOrDefault(dif, 0)+1);
+				}else {
+					HashMap<Integer,Integer> each = new HashMap<Integer, Integer>();
+					each.put(dif,1);
+					hm.put(i,each);
+				}
+				
+				if(hm.containsKey(j) && hm.get(j).getOrDefault(dif, 0)>0) {
+					hm.get(i).put(dif, hm.get(i).get(dif)+hm.get(j).get(dif));
+					res+=hm.get(j).get(dif);
+				}
+			}
+		}
+		return res;
+    }
+	
+	public int solve_rectanglesum(ArrayList<ArrayList<Integer>> A) {
+		int res = 0;
+        int n = A.size();
+        int m = A.get(0).size();
+        int colPresum[][] = new int[n][m];
+        for (int i=0;i<n;i++) {
+            for (int j=0;j<m;j++) {
+                if (j==0) {
+                    colPresum[i][j] = A.get(i).get(j);
+                }else {
+                    colPresum[i][j] = A.get(i).get(j) + colPresum[i][j-1];
+                }
+            }
+        }
+       
+        for (int j=0;j<m;j++) {
+            for (int k=j;k<m;k++) {
+                int sum = 0;
+                for (int i=0;i<n;i++) {
+                    int curr;
+                    if (j==0) {
+                        curr = colPresum[i][k];
+                    }else {
+                        curr = colPresum[i][k] - colPresum[i][j-1];
+                    }                    
+                    if (curr + sum > 0) {
+                        sum += curr;
+                        res=Math.max(sum, res);
+                    }else {
+                        sum = 0;
+                    }
+                }
+            }
+        }
+        return res;
+    }
 
 	public static void main(String[] args) {
 		DP d = new DP();

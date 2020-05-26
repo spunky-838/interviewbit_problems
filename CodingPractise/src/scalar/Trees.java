@@ -22,50 +22,48 @@ public class Trees {
 		}
 	}
 
-public int kthSmallest(TreeNode root, int k) {
-	ArrayList<Integer> res = new ArrayList<Integer>();
-	Stack<TreeNode> s = new Stack<TreeNode>();
+	public int kthSmallest(TreeNode root, int k) {
+		ArrayList<Integer> res = new ArrayList<Integer>();
+		Stack<TreeNode> s = new Stack<TreeNode>();
 
-	while (root != null || !s.isEmpty()) {
-		while (root != null) {
-			s.push(root);
-			root = root.left;
+		while (root != null || !s.isEmpty()) {
+			while (root != null) {
+				s.push(root);
+				root = root.left;
+			}
+			root = s.pop();
+			res.add(root.val);
+			root = root.right;
 		}
-		root = s.pop();
-		res.add(root.val);
-		root = root.right;
+		return res.get(k);
 	}
-	return res.get(k);
-    }
 
+	public int maxSubarraySumCircular(int[] A) {
+		int l = A.length;
+		int max = Integer.MIN_VALUE;
+		int ind = -1;
+		int sum = 0;
+		int i = 0;
+		int size = 0;
+		while (i < l && size < l + 1) {
+			max = Math.max(sum, max);
+			if (sum + A[i % l] < 0) {
+				sum = 0;
+				ind = (i + 1) % l;
+				size = 0;
+			} else {
+				if (ind == -1) {
+					ind = 0;
+				}
+				sum += A[i % l];
+				size++;
+				max = Math.max(sum, max);
+			}
+			i++;
+		}
+		return max;
 
-public int maxSubarraySumCircular(int[] A) {
-	int l=A.length;
-    int max=Integer.MIN_VALUE;
-    int ind=-1;
-    int sum=0;
-    int i=0;
-    int size=0;
-    while(i<l && size<l+1) {
-        max=Math.max(sum, max);
-        if(sum+A[i%l]<0) {
-            sum=0;
-            ind=(i+1)%l;
-            size=0;
-        }else {
-        	if(ind==-1) {
-        		ind=0;
-        	}
-            sum+=A[i%l];
-            size++;
-            max=Math.max(sum, max);
-        }
-        i++;
-    }
-    return max;
-    
-}
-
+	}
 
 	public ArrayList<Integer> inorderTraversal(TreeNode A) {
 		ArrayList<Integer> res = new ArrayList<Integer>();
@@ -584,6 +582,52 @@ public int maxSubarraySumCircular(int[] A) {
 		int n = (int) (Math.pow(2, d + 1) - 1);
 		return num ^ n;
 	}
+
+	public static int maxDifference(TreeNode root, int diff) {
+		if (root == null) {
+			return Integer.MAX_VALUE;
+		}
+
+		int left = maxDifference(root.left, diff);
+		int right = maxDifference(root.right, diff);
+
+		int d = root.val - Math.min(left, right);
+
+		diff = Math.max(diff, d);
+
+		return Math.min(Math.min(left, right), root.val);
+	}
+
+	public static int maxDifference(TreeNode root) {
+		int diff = Integer.MIN_VALUE;
+		maxDifference(root, diff);
+
+		return diff;
+	}
+
+	public static int diff = Integer.MIN_VALUE;
+
+	public int solve_maxdiff(ArrayList<Integer> A, ArrayList<ArrayList<Integer>> B) {
+
+		int max = A.get(0);
+		int min = A.get(0);
+		maxDifference(A, B, 1, max, min);
+		return diff;
+	}
+
+	public void maxDifference(ArrayList<Integer> A, ArrayList<ArrayList<Integer>> B, int ind, int max, int min) {
+		for (int i = 0; i < B.size(); i++) {
+			ArrayList<Integer> each = B.get(i);
+			if ((int) each.get(0) == ind) {
+				int mx = Math.max(max, A.get(each.get(1) - 1));
+				int mn = Math.min(min, A.get(each.get(1) - 1));
+				diff = Math.max(diff, mx - mn);
+				maxDifference(A, B, each.get(1), mx, mn);
+			}
+		}
+	}
+	
+	
 
 	public static void main(String[] args) {
 		ArrayList<Integer> A = new ArrayList<Integer>(Arrays.asList(new Integer[] { 1, 2, 3 }));
